@@ -13,10 +13,6 @@ void timerCallback() {
   flag = true;
 }
 
-void generatePWM(){
-  Serial.println("");
-}
-
 void setup() {
     Serial.begin(115200);
 
