@@ -1,9 +1,13 @@
 #include <Arduino.h>
 #include "BBTimer.hpp"
+#include "mbed.h"
 
 #define ADC_PIN A0
 #define PWM_PIN D2
-#define VREF 3.3    
+#define VREF 3.3  
+
+const unsigned int PWMPeriod = 200; // 200us - 5kHz  
+mbed::PwmOut* pwm;
 
 BBTimer my_timer(BB_TIMER4);
 
@@ -16,7 +20,13 @@ void timerCallback() {
 
 void setup() {
     Serial.begin(115200);
-    pinMode(PWM_PIN, OUTPUT);
+
+    // set up the pwm object for PWMPin
+    pwm = new mbed::PwmOut(digitalPinToPinName(PWM_PIN));
+
+    // set the PWM period to PWMPeriod
+    pwm->period_us(PWMPeriod);
+    
 
     Serial.println("Iniciando temporizador...");
     my_timer.setupTimer(5000000, timerCallback); 
@@ -32,11 +42,11 @@ void loop() {
         float voltage = (adcValue * VREF) / 1023.0; 
 
     
-        int dutyCycle = map(adcValue, 0, 1023, 0, 255);
-        analogWrite(PWM_PIN, dutyCycle);
+        float PWMDutyCycle = (adcValue/1023.0);
+        pwm->write(PWMDutyCycle);
 
         char buffer[50];
-        sprintf(buffer, "ADC: %d | Voltaje: %.2f V | PWM: %d", adcValue, voltage, dutyCycle);
+        sprintf(buffer, "ADC: %d | Voltaje: %.2f V | PWM: %.2f", adcValue, voltage, PWMDutyCycle);
         Serial.println(buffer);
     }
 
