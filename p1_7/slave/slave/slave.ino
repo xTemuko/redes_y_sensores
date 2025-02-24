@@ -23,7 +23,7 @@ void loop() {
         Serial.println(receivedData);
 
         digitalWrite(LED_PIN, HIGH);
-        delay(500);
+        delay(50);
         digitalWrite(LED_PIN, LOW);
 
         newData = false;
