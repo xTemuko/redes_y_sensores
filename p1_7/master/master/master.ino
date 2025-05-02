@@ -23,7 +23,7 @@ void setup() {
 
 void loop() {
     captureAndSendData();
-    delay(20000);
+    delay(100);
 }
 
 
