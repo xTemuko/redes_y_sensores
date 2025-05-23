@@ -1,0 +1,16 @@
+GUÍA PRÁCTICAS REDES Y SENSORES : 
+--------------------------------
+
+
+
+
+P5:
+	-> P5_6 :
+	
+	En el nano ble práctica 4.3 (BLE acelerómetro)
+	En el ESP32 cargamos el programa Servicor TCP envío datos 
+	En el PC ejecutamos Script servidor TCP
+	
+	-> P5_7 :
+	
+	
