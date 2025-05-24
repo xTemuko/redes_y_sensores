@@ -1,7 +1,23 @@
 GUÍA PRÁCTICAS REDES Y SENSORES : 
 --------------------------------
 
+P1_
 
+	-> P1_6:
+	Mandamos por el puerto serie lectura de acelerómetro. 
+
+
+P3:
+
+	Partimos de P1_6. Mandar por el puerto serie acelerómetro. 
+	-> P3:
+	Muestra puerto serie los datos
+	-> P3_1:
+	Guardar datos en txt. ----> ENSEÑAR
+	-> P3_2:
+	Mostrar gráficas.     ----> ENSEÑAR
+
+	Se genera una gráfica del acelerómetro que se modifica en tiempo real. 
 
 
 P5:
@@ -12,5 +28,7 @@ P5:
 	En el PC ejecutamos Script servidor TCP
 	
 	-> P5_7 :
+	
+	Servidor hora. 
 	
 	

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 
-PORT = 'COM6'
+PORT = '/dev/ttyACM1'
 BAUDRATE = 115200
 ser = serial.Serial(PORT, BAUDRATE, timeout=0.1)  
 time.sleep(2)  
