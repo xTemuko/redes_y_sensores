@@ -5,10 +5,17 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 
-PORT = '/dev/ttyACM1'
+PORT = '/dev/ttyACM0' 
 BAUDRATE = 115200
-ser = serial.Serial(PORT, BAUDRATE, timeout=0.1)  
-time.sleep(2)  
+
+try:
+    ser = serial.Serial(PORT, BAUDRATE, timeout=0.1)  
+    print(f"Puerto serie {PORT} abierto exitosamente.")
+    time.sleep(2) 
+    ser.flushInput() 
+except serial.SerialException as e:
+    print(f"Error al abrir el puerto serie {PORT}: {e}")
+    exit()
 
 
 buffer_acel = []   
@@ -27,29 +34,38 @@ axes[0,0].set_title("Acelerómetro X"); axes[0,1].set_title("Acelerómetro Y"); 
 axes[1,0].set_title("Giroscopio X");   axes[1,1].set_title("Giroscopio Y");   axes[1,2].set_title("Giroscopio Z")
 
 
-for ax in axes.flatten():
-    ax.legend([ "Media ± Desv. Est." ], loc='upper right')
+for ax_idx, ax in enumerate(axes.flatten()):
+
+    if ax_idx == 0: 
+      handles, labels = ax.get_legend_handles_labels()
+      if not handles: 
+          pass 
     ax.set_xlabel("Bloque")  
-    ax.set_ylabel("Valor")   
+    ax.set_ylabel("Valor")
+
+
 
 def update(frame):
-    """Función de actualización periódica llamada por FuncAnimation."""
 
+    
     while ser.in_waiting > 0:
         linea = ser.readline().decode('utf-8', errors='ignore').strip()
         if not linea:
             continue 
 
-        if linea.startswith("Enviado: A"):
-
-            datos_str = linea[len("Enviado: A"):]  
-            valores = datos_str.split(',')
-            if len(valores) == 3:
-                try:
-                    vals = [float(v) for v in valores]
-                except ValueError:
-                    vals = None
-                if vals:
+        parts = linea.split(',') 
+        
+        if len(parts) == 4: # Debe tener 4 partes: Tipo, X, Y, Z
+            tipo_sensor = parts[0]
+            vals_str = parts[1:4] # Los valores X, Y, Z como strings
+            
+            try:
+                vals = [float(v) for v in vals_str] # Convertir strings a floats
+            except ValueError:
+                vals = None
+            
+            if vals: 
+                if tipo_sensor == 'A':
                     buffer_acel.append(vals)
                     if len(buffer_acel) == 15:
                         arr = np.array(buffer_acel)
@@ -60,15 +76,7 @@ def update(frame):
                         hist_medias_acel['y'].append(medias[1]); hist_desvs_acel['y'].append(desvs[1])
                         hist_medias_acel['z'].append(medias[2]); hist_desvs_acel['z'].append(desvs[2])
                         buffer_acel.clear()  
-        elif linea.startswith("Enviado: G"):
-            datos_str = linea[len("Enviado: G"):]
-            valores = datos_str.split(',')
-            if len(valores) == 3:
-                try:
-                    vals = [float(v) for v in valores]
-                except ValueError:
-                    vals = None
-                if vals:
+                elif tipo_sensor == 'G':
                     buffer_giro.append(vals)
                     if len(buffer_giro) == 15:
                         arr = np.array(buffer_giro)
@@ -78,6 +86,7 @@ def update(frame):
                         hist_medias_giro['y'].append(medias[1]); hist_desvs_giro['y'].append(desvs[1])
                         hist_medias_giro['z'].append(medias[2]); hist_desvs_giro['z'].append(desvs[2])
                         buffer_giro.clear()
+
 
     for i, eje in enumerate(['x','y','z']):
         ax = axes[0, i]
@@ -101,9 +110,13 @@ def update(frame):
 
     return axes
 
-ani = FuncAnimation(fig, update, interval=100)  # llama a update() cada 100 ms
+# ani = FuncAnimation(fig, update, interval=100, blit=True) 
+ani = FuncAnimation(fig, update, interval=100, cache_frame_data=False) # Llama a update() cada 100 ms
+
 
 try:
     plt.show()  
 finally:
-    ser.close()
+    if ser.is_open:
+        ser.close()
+        print("Puerto serie cerrado.")

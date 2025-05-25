@@ -1,81 +1,53 @@
-#include <Arduino_LSM9DS1.h> 
-#define NUM_SAMPLES 10
-
-// Arreglos para almacenar las lecturas
-float ax[NUM_SAMPLES], ay[NUM_SAMPLES], az[NUM_SAMPLES];  // Acelerómetro
-float gx[NUM_SAMPLES], gy[NUM_SAMPLES], gz[NUM_SAMPLES];  // Giroscopio
-float mx[NUM_SAMPLES], my[NUM_SAMPLES], mz[NUM_SAMPLES];  // Magnetómetro
-
-int sampleIndex = 0;  
+#include <Arduino_LSM9DS1.h> // Asegúrate de tener esta biblioteca instalada
 
 void setup() {
   Serial.begin(115200);
+
   while (!Serial);
 
   if (!IMU.begin()) {
-    Serial.println("No se pudo inicializar el IMU (LSM9DS1).");
-    while (1); 
+    Serial.println("Error: No se pudo inicializar el IMU (LSM9DS1).");
+    while (1); // Detener si el IMU no se inicia
   }
-  Serial.println("IMU inicializado correctamente.");
-
 }
 
 void loop() {
-
-  float xAcc, yAcc, zAcc;
-  float xGyro, yGyro, zGyro;
-  float xMag, yMag, zMag;
+  float ax, ay, az; // Acelerometro
+  float gx, gy, gz; // Giroscopio
+  float mx, my, mz; // Magnetómetro
 
 
   if (IMU.accelerationAvailable()) {
-    IMU.readAcceleration(xAcc, yAcc, zAcc);
+    IMU.readAcceleration(ax, ay, az);
+    Serial.print("A,"); // Prefijo para Acelerometro
+    Serial.print(ax, 4); 
+    Serial.print(",");
+    Serial.print(ay, 4);
+    Serial.print(",");
+    Serial.println(az, 4);
   }
+
+  // Leer y enviar datos del Giroscopio
   if (IMU.gyroscopeAvailable()) {
-    IMU.readGyroscope(xGyro, yGyro, zGyro);
+    IMU.readGyroscope(gx, gy, gz);
+    Serial.print("G,"); // Prefijo para Giroscopio
+    Serial.print(gx, 4);
+    Serial.print(",");
+    Serial.print(gy, 4);
+    Serial.print(",");
+    Serial.println(gz, 4);
   }
+
+  // Leer y enviar datos del Magnetómetro
   if (IMU.magneticFieldAvailable()) {
-    IMU.readMagneticField(xMag, yMag, zMag);
+    IMU.readMagneticField(mx, my, mz);
+    Serial.print("M,"); // Prefijo para Magnetómetro
+    Serial.print(mx, 4);
+    Serial.print(",");
+    Serial.print(my, 4);
+    Serial.print(",");
+    Serial.println(mz, 4);
   }
 
-  ax[sampleIndex] = xAcc;
-  ay[sampleIndex] = yAcc;
-  az[sampleIndex] = zAcc;
-
-  gx[sampleIndex] = xGyro;
-  gy[sampleIndex] = yGyro;
-  gz[sampleIndex] = zGyro;
-
-  mx[sampleIndex] = xMag;
-  my[sampleIndex] = yMag;
-  mz[sampleIndex] = zMag;
-
-  sampleIndex++;
-
-  if (sampleIndex == NUM_SAMPLES) {
-    Serial.println("================= ENVÍO DE BLOQUE =================");
-    for (int i = 0; i < NUM_SAMPLES; i++) {
-      Serial.print("Muestra ");
-      Serial.print(i);
-      Serial.print(": ");
-      Serial.print("ACC(");
-      Serial.print(ax[i], 2); Serial.print(", ");
-      Serial.print(ay[i], 2); Serial.print(", ");
-      Serial.print(az[i], 2); Serial.print(") | ");
-
-      Serial.print("GYR(");
-      Serial.print(gx[i], 2); Serial.print(", ");
-      Serial.print(gy[i], 2); Serial.print(", ");
-      Serial.print(gz[i], 2); Serial.print(") | ");
-
-      Serial.print("MAG(");
-      Serial.print(mx[i], 2); Serial.print(", ");
-      Serial.print(my[i], 2); Serial.print(", ");
-      Serial.print(mz[i], 2); Serial.println(")");
-    }
-    Serial.println("====================================================\n");
-
-    sampleIndex = 0;
-  }
-
-  delay(100);
+  delay(100); 
 }
