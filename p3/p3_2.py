@@ -55,7 +55,7 @@ def update(frame):
 
         parts = linea.split(',') 
         
-        if len(parts) == 4: # Debe tener 4 partes: Tipo, X, Y, Z
+        if len(parts) == 4: # 4 partes: Tipo, X, Y, Z
             tipo_sensor = parts[0]
             vals_str = parts[1:4] # Los valores X, Y, Z como strings
             

@@ -27,10 +27,10 @@ void loop() {
     Serial.println(az, 4);
   }
 
-  // Leer y enviar datos del Giroscopio
+
   if (IMU.gyroscopeAvailable()) {
     IMU.readGyroscope(gx, gy, gz);
-    Serial.print("G,"); // Prefijo para Giroscopio
+    Serial.print("G,"); 
     Serial.print(gx, 4);
     Serial.print(",");
     Serial.print(gy, 4);
@@ -38,10 +38,9 @@ void loop() {
     Serial.println(gz, 4);
   }
 
-  // Leer y enviar datos del Magnetómetro
   if (IMU.magneticFieldAvailable()) {
     IMU.readMagneticField(mx, my, mz);
-    Serial.print("M,"); // Prefijo para Magnetómetro
+    Serial.print("M,"); 
     Serial.print(mx, 4);
     Serial.print(",");
     Serial.print(my, 4);

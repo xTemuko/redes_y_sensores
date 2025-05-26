@@ -1,34 +1,30 @@
 import serial
 import time
-import os # Para manejo de rutas y directorios
+import os 
 
-# --- Configuración ---
-SERIAL_PORT = '/dev/ttyACM0'  # Para Linux. Podría ser /dev/ttyACM1, /dev/ttyUSB0, etc.
-                              # Ejecuta `dmesg | grep tty` después de conectar el Arduino para verificar.
+
+SERIAL_PORT = '/dev/ttyACM0'  
+                             
 BAUD_RATE = 115200
-FILE_DIRECTORY = 'p3'        # Directorio donde se guardará el archivo
+FILE_DIRECTORY = 'p3_log'        
 FILE_NAME = 'datos_sensor.txt'
 FULL_FILE_PATH = os.path.join(FILE_DIRECTORY, FILE_NAME)
 
-# --- Asegurarse de que el directorio de datos exista ---
+
 try:
     os.makedirs(FILE_DIRECTORY, exist_ok=True)
-    print(f"[INFO] Directorio '{FILE_DIRECTORY}' listo.")
-except OSError as e:
-    print(f"[ERROR] No se pudo crear el directorio '{FILE_DIRECTORY}': {e}")
-    exit() # Salir si no se puede crear el directorio
 
-# --- Inicializar archivo de datos con cabecera ---
+except OSError as e:
+    exit() 
+
+
 try:
     with open(FULL_FILE_PATH, 'w') as f:
-        f.write("Tipo;X;Y;Z\n") # Usando punto y coma como en tu ejemplo original
-
-    print(f"[INFO] Archivo '{FULL_FILE_PATH}' inicializado con cabecera.")
+        f.write("Tipo;X;Y;Z\n") 
 except IOError as e:
-    print(f"[ERROR] No se pudo escribir la cabecera en '{FULL_FILE_PATH}': {e}")
-    exit() # Salir si no se puede inicializar el archivo
+    exit() 
 
-# --- Bucle principal para leer del puerto serie y escribir en archivo ---
+
 ser = None  
 try:
     print(f"[INFO] Intentando conectar a {SERIAL_PORT} a {BAUD_RATE} baudios...")
@@ -50,9 +46,9 @@ try:
                 break # 
 
             if linea_str: 
-                print(f"[RAW] {linea_str}") # Mostrar la línea cruda para depuración
+                print(f"[RAW] {linea_str}") 
                 
-                partes = linea_str.split(',') # Separar por coma
+                partes = linea_str.split(',') #
 
 
                 # "A,0.01,0.98,-0.21"
@@ -70,21 +66,18 @@ try:
                             f.write(linea_guardar)
                         print(f"[SAVE] {linea_guardar.strip()}")
 
-                    except ValueError:
-                        print(f"[WARN] Línea ignorada: no se pudieron convertir los valores a float. Línea: '{linea_str}'")
-                    except IOError as e:
-                        print(f"[ERROR] No se pudo escribir en el archivo '{FULL_FILE_PATH}': {e}")
+                    except Exception as e:
+                        print(f"Error '{linea_str}'")
+
                 else:
-                    if linea_str: 
-                        print(f"[WARN] Línea ignorada: formato no reconocido. Línea: '{linea_str}'")
+                   
+                    print(f"formato no reconocido")
 
 
-except serial.SerialException as e:
-    print(f"[ERROR] No se pudo conectar o hubo un problema con el puerto serie {SERIAL_PORT}: {e}")
 except KeyboardInterrupt:
-    print("\n[INFO] Programa interrumpido por el usuario.")
+    print("\n[INFO] Programa interrumpido")
 except Exception as e:
-    print(f"[ERROR] Ocurrió un error inesperado: {e}")
+    print(f"[ERROR] {e}")
 finally:
     if ser and ser.is_open:
         ser.close()

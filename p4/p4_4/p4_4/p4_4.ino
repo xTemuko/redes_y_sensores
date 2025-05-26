@@ -1,5 +1,3 @@
-#include <ESP32_FaceRecog_inferencing.h>
-
 #include <ArduinoBLE.h>
 #include <Arduino_LSM9DS1.h>
 

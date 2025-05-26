@@ -6,6 +6,9 @@ P1_
 	-> P1_6:
 	Mandamos por el puerto serie lectura de acelerómetro. 
 
+P2:
+
+	-> Edge Impulse
 
 P3:
 
@@ -18,6 +21,9 @@ P3:
 	Mostrar gráficas.     ----> ENSEÑAR
 
 	Se genera una gráfica del acelerómetro que se modifica en tiempo real. 
+
+P4:
+
 
 
 P5:
